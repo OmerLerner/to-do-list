@@ -152,6 +152,7 @@ form{
 .task{
     position:relative;
     margin-bottom: 1.25em;
+    cursor: pointer;
 
 }
 .task label{
@@ -160,6 +161,21 @@ form{
     position:relative;
 }
 
+/*   content:'\2193'; for down arrow */
+
+.task::before{
+    content:'+';
+    font-weight:600;
+    position: absolute;
+    top: 40%;
+    right:0px;
+    transform: translateY(-50%);
+    font-size:1.1rem;
+}
+.task.active::before{
+    content:'-';
+
+}
 .task::after{
     content:"";
     position: absolute;
@@ -170,8 +186,27 @@ form{
     background: currentColor;
     opacity: 0.1;
 }
+
+.task #task-content{
+    /* display:none; */
+    padding-top:1.2rem;
+    overflow:hidden;
+    position:relative;
+    transition: 0.25s;
+    overflow-y: auto;
+}
+
+.task #task-content.active{
+    height:fit-content;
+    padding: 10px;
+}
+
 .new-task-creator .create{
     color: var(--clr-primary);
+}
+
+.task #task-description{
+    font-size:0.9rem;
 }
 
 [type="checkbox"]{
@@ -192,7 +227,7 @@ form{
     transition: transform 200ms ease-in-out;
 }
 
-.task:hover .custom-checkbox, [type="checkbox"]:focus + label .custom-checkbox{
+.custom-checkbox:hover, [type="checkbox"]:focus + label .custom-checkbox{
     transform: scale(1.2);
     color: var(--clr-primary);
 }
@@ -226,6 +261,15 @@ form{
     transform-origin: left;
 
 }
+
+
+
+.task:hover /* I want a plus button to show on right side on hover */
+{
+
+}
+
+
 
 .delete-stuff{
     display:flex;
