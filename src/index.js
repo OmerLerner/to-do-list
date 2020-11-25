@@ -91,6 +91,18 @@ newTaskForm.addEventListener('submit', e =>{
     saveAndRender();
 });
 
+//Creates new task object - taskContainer
+function createTask(name){
+    return {id: Date.now().toString(), name: name, complete: false};
+
+}
+
+function addCollapsibleEventListener(task){
+    task.addEventListener("click", function(){
+        
+    })
+}
+
 //Event listener that edits task count when we complete a task
 tasksContainer.addEventListener('click', e=>{
     if(e.target.tagName.toLowerCase()==='input'){
@@ -118,11 +130,7 @@ clearCompletedTasksButton.addEventListener('click', e=>{
 
 
 
-//Creates new task object - taskContainer
-function createTask(name){
-    return {id: Date.now().toString(), name: name, complete: false};
 
-}
 
 
 //DOM Manipulation Functions

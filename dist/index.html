@@ -53,12 +53,19 @@
 
     </div>
     <template id="task-template">
-        <div class="task">
+        <div class="task" id="" data-disclosure aria-controls="task-content"
+        aria-expanded="false">
             <input type="checkbox"/>
             <label>
                 <span class="custom-checkbox"></span>
             </label>
+            <div id="task-content" hidden>
+                <div id="task-description">This is where the description goes</div>
+                <div id="priority">This is the task priority</div>
+                
+            </div>
         </div>
+        
     </template>
 
   <script defer src="main.js"></script>
