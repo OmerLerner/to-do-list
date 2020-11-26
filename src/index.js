@@ -34,6 +34,19 @@ const newTaskInput = document.querySelector('[data-new-task-input]');
 //Button that clears completed tasks
 const clearCompletedTasksButton = document.querySelector('[data-clear-complete-tasks-button]');
 
+//Button that closes edit window
+const closeEditWindowButton=document.querySelector('[data-close-edit-window]');
+
+//Button that submits the edited task
+const submitEditTaskButton=document.querySelector('[data-edit-submit-button]');
+
+//Task that is currently being edited
+let editedTask="";
+
+
+
+
+
 
 //Local storage keys
 const LOCAL_STORAGE_LIST_KEY='task.lists';
@@ -43,6 +56,10 @@ const LOCAL_STORAGE_LIST_ID_KEY='task.selectedListId';
 let lists= JSON.parse(localStorage.getItem(LOCAL_STORAGE_LIST_KEY)) || 
 [{id: "1", name:'Daily Chores', tasks:[]},
 {id: "2", name:'Grocery List', tasks:[]}];
+
+//ID for task content
+let taskIDCounter=1000;
+
 
 //The ID for the currently selected list, this is a string
 let selectedListId= localStorage.getItem(LOCAL_STORAGE_LIST_ID_KEY);
@@ -93,15 +110,14 @@ newTaskForm.addEventListener('submit', e =>{
 
 //Creates new task object - taskContainer
 function createTask(name){
-    return {id: Date.now().toString(), name: name, complete: false};
+    return {id: Date.now().toString(), name: name, complete: false, content: {description:"", priority:"Low"}};
 
 }
 
-function addCollapsibleEventListener(task){
-    task.addEventListener("click", function(){
-        
-    })
-}
+//What to do tomorrow//
+//1.) Have the input edit the task
+//2.) Make sure that the changes are saved onto local storage
+
 
 //Event listener that edits task count when we complete a task
 tasksContainer.addEventListener('click', e=>{
@@ -129,8 +145,69 @@ clearCompletedTasksButton.addEventListener('click', e=>{
 })
 
 
+//Dynamic Event listener that opens/closes content of each task //
 
+document.addEventListener('click', function(event) {
+    if (!event.target.hasAttribute('data-disclosure')) return;
+    let taskContent=document.getElementById(event.target.getAttribute('id')); 
+    let hiddenContent=taskContent.querySelector('#task-content');
+    if (!taskContent) return;
+    if (event.target.getAttribute('aria-expanded')=="true")
+    {
+        event.target.setAttribute('aria-expanded',false);
+        hiddenContent.setAttribute('hidden','');
+    }
+    else
+    {
+        event.target.setAttribute('aria-expanded',true);
+        hiddenContent.removeAttribute('hidden');
+    }
+  });
 
+//Dynamic edit button & window listeners
+
+//Dynamic edit button event listener
+document.addEventListener('click', function(event){
+    if (!event.target.hasAttribute('data-edit-task-button')) return
+    let modal = event.target.getAttribute('data-modal');
+    document.getElementById(modal).style.display = "block";
+    const selectedList =lists.find(list => list.id === selectedListId);
+    const selectedTaskDiv=event.target.closest(".task");
+    const selectedTaskLabel=selectedTaskDiv.querySelector('label');
+    editedTask = selectedList.tasks.find(task => task.id === selectedTaskLabel.htmlFor);
+    setEditFields(editedTask.name,editedTask.content.description,editedTask.content.priority);
+
+});
+
+//Close button
+closeEditWindowButton.addEventListener('click',function(event){
+    let closeButton= event.target;
+    let selectedModal=closeButton.closest(".modal");
+    selectedModal.style.display= "none";
+    setEditFields("","","");
+});
+
+submitEditTaskButton.addEventListener('click',function(event){
+
+    //Fetch form inputs
+    let newTaskName=document.getElementById("edit-task-name").value;
+    let newTaskDescription=document.getElementById("edit-task-description-input").value;
+    let newTaskPriority=document.getElementById("edit-task-priority").value;
+
+    //Sets tasks fields to whatever was inputted
+    editedTask.name=newTaskName;
+    editedTask.content.description=newTaskDescription;
+    editedTask.content.priority=newTaskPriority;
+
+    //Closes the modal
+    let selectedModal=event.target.closest(".modal");
+    selectedModal.style.display= "none";
+    setEditFields("","","");
+
+    //Renders and saves the changes
+    saveAndRender();
+    
+})
 
 
 //DOM Manipulation Functions
@@ -174,21 +251,34 @@ function renderTaskCount(selectedList){
     listCountElement.innerText= `${incompleteTaskCount} ${taskString} remaining`;
 }
 
-//Renders all of the tasks in the given list in order to display them in the container
+//Renders all of the tasks in the given list in order to display them in the container (for display purposes, does not change the objects)
 function renderTasks(selectedList){
     selectedList.tasks.forEach(task =>{
         const taskElement = document.importNode(taskTemplate.content, true);
+        //Sets the checkbox (crossed or not)
         const checkbox = taskElement.querySelector('input');
         checkbox.id = task.id;
         checkbox.checked = task.complete;
+        //Sets the task name
         const label = taskElement.querySelector('label');
         label.htmlFor = task.id;
+        //Sets the taskID for HTML purposes
+        const taskID=taskElement.querySelector('[data-disclosure]');
+        taskID.setAttribute("id",taskIDCounter);
+        taskIDCounter++;
+        //Sets the taskDescription
+        const taskDescription=taskElement.querySelector('[data-task-description]');
+        taskDescription.innerText="Description: "+task.content.description;
+        //Sets the task priority
+        const taskPriority=taskElement.querySelector('[data-task-priority]');
+        taskPriority.innerText="Priority: "+task.content.priority;
         label.append(task.name);
         tasksContainer.appendChild(taskElement);
 
     })
 
 }
+
 //Renders a list
 function renderLists(){
     lists.forEach(list =>{
@@ -209,4 +299,11 @@ function clearElement(element){
     }
 }
 
+//Edits fields for "task edit" form
+function setEditFields(taskName,taskDescription,taskPriority)
+{
+    document.getElementById("edit-task-name").value=taskName;
+    document.getElementById("edit-task-description-input").value =taskDescription;
+    document.getElementById("edit-task-priority").value=taskPriority;
+}
 render();
