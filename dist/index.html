@@ -4,6 +4,8 @@
 <head>
   <meta charset="utf-8">
   <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Nerko+One&family=Nunito:wght@600&display=swap" rel="stylesheet"> 
 
 </head>
 
@@ -60,13 +62,35 @@
                 <span class="custom-checkbox"></span>
             </label>
             <div id="task-content" hidden>
-                <div id="task-description">This is where the description goes</div>
-                <div id="priority">This is the task priority</div>
+                <button id="edit-button" data-modal="modalOne" data-edit-task-button>Edit</button>
+                <div id="task-description"data-task-description>Description</div>
+                <div id="priority" data-task-priority><div data-task-priority-color></div></div>
                 
             </div>
         </div>
         
     </template>
+
+    <div id="modalOne" class="modal">
+        <div class="modal-content">
+          <div>
+            <a class="close" data-close-edit-window>&times;</a>
+            <form id="edit-task-form" data-edit-task-form>
+              <h3>Edit Task</h3>
+              <div id="edit-inputs">
+                <h4>Task Name: <input type="text" id="edit-task-name" name="task-name" placeholder="Task Name">  </h4>
+                <h4>Description: <input type="text" id="edit-task-description-input" name="task-description" placeholder="Task Description">  </h4>
+                <h4>Priority: <select name="priority" id="edit-task-priority" name="priority" placeholder="Priority">
+                    <option value="High">High</option>
+                    <option value="Medium">Medium</option>
+                    <option value="Low">Low</option></select>  </h4>
+              </div>
+              <button data-edit-submit-button id="edit-submit-button">Submit</button>
+              <!-- type="submit" href="/"  add this to button if there are issues-->
+            </form>
+          </div>
+        </div>
+      </div>
 
   <script defer src="main.js"></script>
 </body>
