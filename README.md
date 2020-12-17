@@ -10,6 +10,8 @@ A vanilla JS based to-do list.
 
 * __OOP and Single Page Website Design__
 
+* __Webpack support__
+
 ## To-do
 
 * Add sorting features by priority and or date created
